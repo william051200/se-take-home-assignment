@@ -20,10 +20,12 @@ function onAddVIPOrderButtonClicked() {
 
 function onAddBotButtonClicked() {
   botManager.value.addBot(orderManager.value as OrderManager);
+  botManager.value.triggerAllBotToWork();
 }
 
 function onRemoveBotButtonClicked() {
   botManager.value.removeNewestBot();
+  botManager.value.triggerAllBotToWork();
 }
 
 function removeBot(targetBot: Bot) {
@@ -56,7 +58,7 @@ function stopWorking(targetBot: Bot) {
     <n-flex horizontal style="justify-content: space-between; width: 100%">
       <n-flex vertical style="justify-content: space-between; width: 49%">
         <n-card :title="`Pending (${orderManager.pendingOrdersLength})`" class="card_container">
-        <!-- <n-card :title="`Pending (${orderManager.orders.length})`" class="card_container"> -->
+          <!-- <n-card :title="`Pending (${orderManager.orders.length})`" class="card_container"> -->
           <n-scrollbar style="max-height: 35vh">
             <div v-for="order in orderManager.orders" style="margin: 10px">
               <OrderCard

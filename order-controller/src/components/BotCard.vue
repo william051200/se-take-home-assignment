@@ -10,17 +10,20 @@ watch(
   () => props.bot,
   (value) => {
     isWorking.value = value.isWorking;
+    if (value.orderNumber) orderNumber.value = value.orderNumber;
   },
   { deep: true },
 );
 
 onMounted(() => {
   isWorking.value = props.bot.isWorking;
+  if (props.bot.orderNumber) orderNumber.value = props.bot.orderNumber;
 });
 
 const emit = defineEmits(["removeBot", "startWorking", "stopWorking"]);
 
 const isWorking = ref(false);
+const orderNumber = ref(0);
 
 function onRemoveBotButtonClicked() {
   emit("removeBot");
@@ -45,7 +48,7 @@ function onStopWorkingButtonClicked() {
       <n-tag v-else class="highlight" type="warning">Idle</n-tag>
 
       <div v-if="isWorking">Order number:</div>
-      <n-tag v-if="isWorking" type="info">{{ props.bot.orderNumber }}</n-tag>
+      <n-tag v-if="isWorking" type="info">{{ orderNumber }}</n-tag>
       <!-- <n-button type="error" @click="onRemoveBotButtonClicked">Remove</n-button> -->
       <!-- <n-button v-if="!isWorking" type="info" @click="onStartWorkingButtonClicked">
         Start Working
