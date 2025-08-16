@@ -1,3 +1,4 @@
+import { reactive } from "vue";
 import { Bot } from "./bot";
 import type { OrderManager } from "./order_manager";
 
@@ -9,9 +10,9 @@ export class BotManager {
   }
 
   addBot(orderManager: OrderManager) {
-    const bot = new Bot(this.bots.length + 1, orderManager);
-    this._bots.push(bot);
-    this.startWorking(bot);
+    const bot = reactive(new Bot(this.bots.length + 1, orderManager));
+    this._bots.push(bot as Bot);
+    this.startWorking(bot as Bot);
   }
 
   removeBot(targetBot: Bot) {

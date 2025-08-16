@@ -7,8 +7,9 @@ export class Bot {
   private _id;
   private _isWorking = false;
   private _orderManager: OrderManager;
-  private _timer: any = null;
   private _processingOrder: Order | undefined;
+  private _timeoutSec = 0;
+  private _timer: any = null;
 
   constructor(id: number, orderManager: OrderManager) {
     this._id = id;
@@ -27,6 +28,18 @@ export class Bot {
     return this._processingOrder?.id;
   }
 
+  get timeoutSec(): number {
+    return this._timeoutSec;
+  }
+
+  private async _timeout() {
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve("");
+      }, 1000);
+    });
+  }
+
   private async _work() {
     if (this._isWorking) return;
 
@@ -36,13 +49,30 @@ export class Bot {
     this._processingOrder = order;
     this._isWorking = true;
 
-    this._timer = setTimeout(() => {
-      this._orderManager.completeOrder(order);
-      this._processingOrder = undefined;
-      this._isWorking = false;
-      this._timer = null;
-      this.start();
-    }, PROCESSING_TIME_SECOND * 1000);
+    let i = 0;
+    this._timeoutSec = i;
+    while (i < PROCESSING_TIME_SECOND) {
+      await this._timeout();
+
+      this._timeoutSec = i + 1;
+      if (i + 1 === PROCESSING_TIME_SECOND) {
+        this._orderManager.completeOrder(order);
+        this._processingOrder = undefined;
+        this._isWorking = false;
+        this._timer = null;
+        this.start();
+      }
+
+      i++;
+    }
+
+    // this._timer = setTimeout(() => {
+    //   this._orderManager.completeOrder(order);
+    //   this._processingOrder = undefined;
+    //   this._isWorking = false;
+    //   this._timer = null;
+    //   this.start();
+    // }, PROCESSING_TIME_SECOND * 1000);
   }
 
   start() {
